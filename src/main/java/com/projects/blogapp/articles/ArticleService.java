@@ -9,8 +9,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ArticleService {
-    private ArticleRepository articleRepository;
-    private UserRepository userRepository;
+    private final ArticleRepository articleRepository;
+    private final UserRepository userRepository;
     public ArticleService(ArticleRepository articleRepository, UserRepository userRepository){
         this.articleRepository = articleRepository;
         this.userRepository = userRepository;
@@ -25,8 +25,8 @@ public class ArticleService {
         }
         return article;
     }
-    public ArticleEntity createArticle(CreateArticleRequest a, long authorId){
-        var author = userRepository.findByUserId(authorId).orElseThrow(()-> new UserService.UserNotFoundException(authorId));
+    public ArticleEntity createArticle(CreateArticleRequest a, Long authorId){
+        var author = userRepository.findById(authorId).orElseThrow(()-> new UserService.UserNotFoundException(authorId));
         return articleRepository.save(ArticleEntity.builder()
                 .author(author)
                 //Todo proper slugification function

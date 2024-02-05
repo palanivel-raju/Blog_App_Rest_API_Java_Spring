@@ -7,3 +7,4 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update # in prod, use update, NOT create
+    show-sql: true

@@ -1,4 +1,8 @@
 package com.projects.blogapp.comments;
 
-public class CommentService   {
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+
+public class CommentService {
 }
