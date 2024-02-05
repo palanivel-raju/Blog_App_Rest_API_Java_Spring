@@ -9,6 +9,7 @@ import jakarta.persistence.*;
 @Entity(name = "users")
 @Getter
 @Setter
+@Builder
 @ToString
 @RequiredArgsConstructor
 @AllArgsConstructor
@@ -32,6 +33,7 @@ public class UserEntity {
     private String bio;
 
     @Column(nullable = true)
-    @NonNull
+    @Nullable
     private String image;
+
 }

@@ -14,6 +14,7 @@ import java.util.Date;
 @Entity(name ="comments")
 @Getter
 @Setter
+@Builder
 @RequiredArgsConstructor
 @AllArgsConstructor
 @ToString
