@@ -3,6 +3,7 @@ package com.projects.blogapp.users;
 import com.projects.blogapp.users.DTO.CreateUserRequest;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -11,15 +12,19 @@ import java.util.Optional;
 public class UserService {
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository, ModelMapper modelMapper){
+    public UserService(UserRepository userRepository, ModelMapper modelMapper,
+                       PasswordEncoder passwordEncoder){
         this.userRepository = userRepository;
         this.modelMapper = modelMapper;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public UserEntity create_user(CreateUserRequest u){
         //use model mapper to set the values
         UserEntity userEntity = modelMapper.map(u, UserEntity.class);
+        userEntity.setPassword(passwordEncoder.encode(u.getPassword()));
         // use builder to set the values
 //        var userEntity = UserEntity.builder()
 //                .username(u.getUsername())
@@ -36,8 +41,11 @@ public class UserService {
 
     }
 
-    public UserEntity loginUser(String name, String Password){
-        return userRepository.findByUsername(name).orElseThrow(()-> new UserNotFoundException(name));
+    public UserEntity loginUser(String name, String password){
+        var user = userRepository.findByUsername(name).orElseThrow(()-> new UserNotFoundException(name));
+        var passmatch = passwordEncoder.matches(password, user.getPassword());
+        if(!passmatch) throw new InvalidCreditionalException();
+        return  user;
         //other way of to do
 //        Optional<UserEntity> user = userRepository.findByUserName(name);
 //        if(user.isEmpty()){
@@ -53,6 +61,13 @@ public class UserService {
         }
         public UserNotFoundException(long userId){
             super(userId+" userId is not found, retry");
+        }
+
+
+    }
+    public static class InvalidCreditionalException extends IllegalArgumentException{
+        public InvalidCreditionalException(){
+            super("Invalid username or password");
         }
     }
 }

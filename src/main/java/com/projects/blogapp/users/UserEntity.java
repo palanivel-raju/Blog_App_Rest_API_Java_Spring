@@ -1,39 +1,40 @@
 package com.projects.blogapp.users;
 
+import jakarta.annotation.Nonnull;
+import jakarta.validation.constraints.Null;
 import lombok.*;
 import org.springframework.lang.Nullable;
 import jakarta.persistence.*;
 
-//import javax.persistence.*;
-
-@Entity(name = "users")
 @Getter
 @Setter
-@Builder
 @ToString
+@Entity(name = "users")
+@Builder
 @RequiredArgsConstructor
 @AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
 public class UserEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
     private Long id;
 
     @Column(nullable = false)
-    @NonNull
+    @Nonnull
     private String username;
 
     @Column(nullable = false)
-    @NonNull
+    @Nonnull
     private String email;
 
-    @Column(nullable = true)
+    @Column(nullable = false)
+    @Nonnull
+    private String password;
+
     @Nullable
     private String bio;
 
-    @Column(nullable = true)
-    @Nullable
     private String image;
 
 }

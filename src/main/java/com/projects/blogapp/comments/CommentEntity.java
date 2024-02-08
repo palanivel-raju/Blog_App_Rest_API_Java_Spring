@@ -3,25 +3,28 @@ package com.projects.blogapp.comments;
 
 import com.projects.blogapp.articles.ArticleEntity;
 import com.projects.blogapp.users.UserEntity;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
-import org.springframework.lang.Nullable;
 
 //import javax.persistence.*;
 import java.util.Date;
 
+
+//@Builder
+//@RequiredArgsConstructor
+//@AllArgsConstructor
+
+//@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity(name ="comments")
 @Getter
 @Setter
-@Builder
-@RequiredArgsConstructor
-@AllArgsConstructor
 @ToString
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CommentEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
     private Long id;
 
@@ -29,18 +32,20 @@ public class CommentEntity {
     @Nullable
     private String title;
 
-    @NonNull
+    @Nonnull
     private String body;
 
     @CreatedDate
     private Date createdDate;
 
+
+//    @JoinColumn(name = "authorId", nullable = false)
     @ManyToOne
-    @JoinColumn(name = "authorId", nullable = false)
     private UserEntity author;
 
+
+//    @JoinColumn(name = "articleId", nullable = false)
     @ManyToOne
-    @JoinColumn(name = "articleId", nullable = false)
     private ArticleEntity articleEntity;
 
 }

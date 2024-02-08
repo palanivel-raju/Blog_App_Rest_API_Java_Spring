@@ -1,10 +1,12 @@
 package com.projects.blogapp.users;
 
 import com.projects.blogapp.Common.DTO.ErrorResponse;
+import com.projects.blogapp.Security.JWTService;
 import com.projects.blogapp.users.DTO.CreateUserRequest;
 import com.projects.blogapp.users.DTO.LoginUserRequest;
 import com.projects.blogapp.users.DTO.UserResponse;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,21 +17,28 @@ import java.net.URI;
 public class UserController {
     private final UserService userService;
     private final ModelMapper modelMapper;
+    private final JWTService jwtService;
 
-    public UserController(UserService userService, ModelMapper modelMapper){
+    public UserController(UserService userService, ModelMapper modelMapper,
+                          JWTService jwtService){
         this.userService = userService;
         this.modelMapper = modelMapper;
+        this.jwtService = jwtService;
     }
     @PostMapping("")
     public ResponseEntity<UserResponse> signupUser(@RequestBody CreateUserRequest request){
         UserEntity userEntity = userService.create_user(request);
         URI savedUserURI =URI.create("/users/"+ userEntity.getId());
-        return ResponseEntity.created(savedUserURI).body(modelMapper.map(userEntity, UserResponse.class));
+        var UserResponse = modelMapper.map(userEntity, UserResponse.class);
+        UserResponse.setToken(jwtService.createJwt(userEntity.getId()));
+        return ResponseEntity.created(savedUserURI).body(UserResponse);
     }
     @PostMapping("/login")
     ResponseEntity<UserResponse> loginUser(@RequestBody LoginUserRequest request){
         UserEntity userEntity = userService.loginUser(request.getUsername(), request.getPassword());
-        return ResponseEntity.ok(modelMapper.map(userEntity, UserResponse.class));
+        var UserResponse = modelMapper.map(userEntity, UserResponse.class);
+        UserResponse.setToken(jwtService.createJwt(userEntity.getId()));
+        return ResponseEntity.ok(UserResponse);
     }
 
     @ExceptionHandler({
